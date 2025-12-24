@@ -924,6 +924,7 @@
         </div>
         <div class="nav-links">
             <a class="nav-link active" data-section="home" onclick="showSection('home', event)">Home</a>
+            <a class="nav-link" href="https://secure-document-link-sharing-platform-production-5bdd.up.railway.app/" target="_blank" rel="noopener">Live Demo</a>
             <a class="nav-link" data-section="features" onclick="showSection('features', event)">Features</a>
             <a class="nav-link" data-section="dashboard" onclick="showSection('dashboard', event)" id="dashboardLink" style="display: none;">Dashboard</a>
             <a class="nav-link" data-section="upload" onclick="showSection('upload', event)" id="uploadLink" style="display: none;">Upload</a>
@@ -977,8 +978,8 @@
                             <div style="color: #555; font-size: 13px; margin-top: 2px;">Email: demo@secureshare.com · Password: DemoPass123!</div>
                             <div style="color: #6c63ff; font-size: 12px; margin-top: 4px; font-weight: 600;">Identical flow as real users (auth, upload, share, download)</div>
                         </div>
-                        <button class="btn btn-primary" style="padding: 12px 22px;" onclick="demoLogin()">
-                            <i class="fas fa-bolt"></i> Launch demo
+                        <button class="btn btn-primary" style="padding: 12px 22px;" onclick="openLiveDemo()">
+                            <i class="fas fa-bolt"></i> Open Live Demo
                         </button>
                     </div>
                 </div>
@@ -1401,6 +1402,16 @@
             const loginForm = document.querySelector('#loginModal form');
             if (loginForm) {
                 loginForm.dispatchEvent(new Event('submit'));
+            }
+        }
+
+        function openLiveDemo() {
+            const url = 'https://secure-document-link-sharing-platform-production-5bdd.up.railway.app/';
+            try {
+                window.open(url, '_blank', 'noopener');
+            } catch (e) {
+                // fallback
+                window.location.href = url;
             }
         }
 

@@ -924,7 +924,7 @@
         </div>
         <div class="nav-links">
             <a class="nav-link active" data-section="home" onclick="showSection('home', event)">Home</a>
-            <a class="nav-link" onclick="openLiveDemoModal()">Live Demo</a>
+            <a class="nav-link" href="https://secure-document-link-sharing-platform-production-5bdd.up.railway.app/" target="_blank" rel="noopener">Live Demo</a>
             <a class="nav-link" data-section="features" onclick="showSection('features', event)">Features</a>
             <a class="nav-link" data-section="dashboard" onclick="showSection('dashboard', event)" id="dashboardLink" style="display: none;">Dashboard</a>
             <a class="nav-link" data-section="upload" onclick="showSection('upload', event)" id="uploadLink" style="display: none;">Upload</a>
@@ -978,7 +978,7 @@
                             <div style="color: #555; font-size: 13px; margin-top: 2px;">Email: demo@secureshare.com · Password: DemoPass123!</div>
                             <div style="color: #6c63ff; font-size: 12px; margin-top: 4px; font-weight: 600;">Identical flow as real users (auth, upload, share, download)</div>
                         </div>
-                        <button class="btn btn-primary" style="padding: 12px 22px;" onclick="openLiveDemoModal()">
+                        <button class="btn btn-primary" style="padding: 12px 22px;" onclick="openLiveDemo()">
                             <i class="fas fa-bolt"></i> Open Live Demo
                         </button>
                     </div>
@@ -1233,18 +1233,7 @@
         </div>
     </div>
 
-    <!-- Live Demo Modal (embedded iframe) -->
-    <div class="modal" id="liveDemoModal" style="padding: 20px;">
-        <div class="modal-content" style="width: 95%; max-width: 1200px; height: 80vh; padding: 12px;">
-            <div class="modal-header" style="margin-bottom:8px;">
-                <div class="modal-title"><i class="fas fa-external-link-alt"></i> Live Demo</div>
-                <button class="modal-close" onclick="closeLiveDemoModal()">&times;</button>
-            </div>
-            <div style="height: calc(100% - 56px);">
-                <iframe id="liveDemoFrame" src="" style="width:100%; height:100%; border:0; border-radius:8px;" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
-            </div>
-        </div>
-    </div>
+    <!-- Live Demo opens externally in a new tab -->
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -1418,21 +1407,13 @@
             }
         }
 
-        function openLiveDemoModal() {
+        function openLiveDemo() {
             const url = 'https://secure-document-link-sharing-platform-production-5bdd.up.railway.app/';
-            const iframe = document.getElementById('liveDemoFrame');
-            if (!iframe) return;
-            iframe.src = url;
-            document.getElementById('liveDemoModal').classList.add('show');
-        }
-
-        function closeLiveDemoModal() {
-            const iframe = document.getElementById('liveDemoFrame');
-            if (iframe) {
-                // clear src to stop any active media / scripts
-                iframe.src = '';
+            try {
+                window.open(url, '_blank', 'noopener');
+            } catch (e) {
+                window.location.href = url;
             }
-            document.getElementById('liveDemoModal').classList.remove('show');
         }
 
         function closeModal(modalId) {

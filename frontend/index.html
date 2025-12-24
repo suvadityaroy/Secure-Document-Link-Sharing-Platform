@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureShare - Professional File Sharing Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            width: 520px;
+            height: 520px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.35;
+            z-index: 0;
+            pointer-events: none;
+            transition: transform 0.8s ease;
+        }
+
+        body::before {
+            top: -160px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(102,126,234,0.55) 0%, rgba(118,75,162,0.35) 60%, transparent 70%);
+        }
+
+        body::after {
+            bottom: -200px;
+            left: -120px;
+            background: radial-gradient(circle, rgba(118,75,162,0.45) 0%, rgba(102,126,234,0.30) 55%, transparent 70%);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+            position: relative;
+            padding-bottom: 6px;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-link.active {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .content-wrapper {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-upload-area {
+            border: 3px dashed #e0e0e0;
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: #e8eeff;
+            transform: scale(1.02);
+        }
+
+        .file-upload-icon {
+            font-size: 64px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .file-upload-hint {
+            color: #999;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .btn:active::after {
+            width: 220%;
+            height: 220%;
+            opacity: 1;
+        }
+
+        .btn.is-loading {
+            cursor: progress;
+            opacity: 0.85;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-refresh:hover,
+        .btn-refresh:active {
+            background: #ff4d4f;
+            color: #fff;
+        }
+
+        .btn-refresh:active {
+            transform: translateY(1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ee5a6f;
+        }
+
+        .input-disabled {
+            opacity: 0.55;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .file-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .file-card {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e8eeff;
+            transition: all 0.3s;
+        }
+
+        .file-card:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .file-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .file-info {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .file-actions .btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .share-link-container {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 2px solid #e8eeff;
+        }
+
+        .share-link-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .link-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .link-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .copy-btn {
+            padding: 12px 24px;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state-hint {
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #f0f0f0;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .dashboard-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.14);
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card-icon {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .file-item {
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 14px;
+            background: #fff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            animation: fadeInUp 0.45s ease;
+        }
+
+        .file-item:hover {
+            transform: translateY(-2px);
+            border-color: #e0e7ff;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .share-link-container {
+            animation: fadeInUp 0.45s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .hero {
+                padding: 40px 30px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .features-grid,
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .checkbox-wrapper label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            SecureShare
+        </div>
+        <div class="nav-links">
+            <a class="nav-link active" data-section="home" onclick="showSection('home', event)">Home</a>
+            <a class="nav-link" data-section="features" onclick="showSection('features', event)">Features</a>
+            <a class="nav-link" data-section="dashboard" onclick="showSection('dashboard', event)" id="dashboardLink" style="display: none;">Dashboard</a>
+            <a class="nav-link" data-section="upload" onclick="showSection('upload', event)" id="uploadLink" style="display: none;">Upload</a>
+        </div>
+        <div class="user-menu" id="userMenu" style="display: none;">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <button class="btn btn-secondary" onclick="logout()" style="padding: 10px 20px;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        <div id="authButtons">
+            <button class="btn btn-outline" onclick="openModal('loginModal')" style="padding: 10px 20px;">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home Section -->
+        <div class="section active" id="home">
+            <div class="hero">
+                <h1>🔒 Secure File Sharing Made Simple</h1>
+                <p>Share files securely with anyone, anywhere. Generate shareable links with expiry dates and access controls.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="openModal('registerModal')">
+                        <i class="fas fa-user-plus"></i> Get Started Free
+                    </button>
+                    <button class="btn btn-outline" onclick="showSection('features')">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </button>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalFiles">0</div>
+                        <div class="stat-label">Files Shared</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalUsers">0</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalDownloads">0</div>
+                        <div class="stat-label">Downloads</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <div style="display: inline-flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.9); padding: 16px 22px; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); border: 1px solid #eae8ff;">
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; color: #333;">Demo login for recruiters</div>
+                            <div style="color: #555; font-size: 13px; margin-top: 2px;">Email: demo@secureshare.com · Password: DemoPass123!</div>
+                            <div style="color: #6c63ff; font-size: 12px; margin-top: 4px; font-weight: 600;">Identical flow as real users (auth, upload, share, download)</div>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 12px 22px;" onclick="demoLogin()">
+                            <i class="fas fa-bolt"></i> Launch demo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="section" id="features">
+            <div class="content-wrapper">
+                <div class="content">
+                    <h2 style="font-size: 36px; margin-bottom: 40px; text-align: center; color: #333;">
+                        <i class="fas fa-star" style="color: #667eea;"></i> Features
+                    </h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                            <div class="feature-title">Secure Encryption</div>
+                            <div class="feature-desc">All files are encrypted with SHA-256 hashing for maximum security</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-link"></i></div>
+                            <div class="feature-title">Shareable Links</div>
+                            <div class="feature-desc">Generate secure links that can be shared with anyone instantly</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                            <div class="feature-title">Auto Expiry</div>
+                            <div class="feature-desc">Set expiration dates for your shared links automatically</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-eye-slash"></i></div>
+                            <div class="feature-title">One-Time Access</div>
+                            <div class="feature-desc">Links that expire after first download for extra security</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="feature-title">Access Analytics</div>
+                            <div class="feature-desc">Track who accessed your files and when</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <div class="feature-title">Fast Upload</div>
+                            <div class="feature-desc">Quick file uploads with drag and drop support</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" onclick="openModal('registerModal')">
+                            <i class="fas fa-rocket"></i> Start Sharing Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="section" id="dashboard">
+            <div class="content-wrapper">
+                <div class="content">
+                    <div class="alert" id="dashboardAlert"></div>
+                    <h2 style="font-size: 32px; margin-bottom: 30px; color: #333;">
+                        <i class="fas fa-tachometer-alt" style="color: #667eea;"></i> Dashboard
+                    </h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-title">My Files</div>
+                                <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+                            </div>
+                            <div style="font-size: 36px; font-weight: 700; color: #667eea;" id="myFilesCount">0</div>
+                            <div style="color: #666; margin-top: 5px;">Total uploaded</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-title">Share Links</div>
+                                <div class="card-icon"><i class="fas fa-share-alt"></i></div>
+                            </div>
+                            <div style="font-size: 36px; font-weight: 700; color: #667eea;" id="shareLinksCount">0</div>
+                            <div style="color: #666; margin-top: 5px;">Active shares</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-title">Total Downloads</div>
+                                <div class="card-icon"><i class="fas fa-download"></i></div>
+                            </div>
+                            <div style="font-size: 36px; font-weight: 700; color: #667eea;" id="downloadsCount">0</div>
+                            <div style="color: #666; margin-top: 5px;">This month</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="showSection('upload')">
+                            <i class="fas fa-plus"></i> Upload New File
+                        </button>
+                        <button class="btn btn-secondary btn-refresh" onclick="loadMyFiles()" style="margin-left: 10px;">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="myFilesList" class="file-list" style="margin-top: 30px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="section" id="upload">
+            <div class="content-wrapper">
+                <div class="content">
+                    <div class="alert" id="uploadAlert"></div>
+                    <h2 style="font-size: 32px; margin-bottom: 30px; color: #333;">
+                        <i class="fas fa-cloud-upload-alt" style="color: #667eea;"></i> Upload & Share
+                    </h2>
+                    <div class="file-upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" onchange="handleFileSelect(event)">
+                        <div class="file-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <div class="file-upload-text">Click or drag file here to upload</div>
+                        <div class="file-upload-hint">Maximum file size: 100MB</div>
+                    </div>
+                    <div id="selectedFileInfo" style="display: none; margin-top: 25px;">
+                        <div style="background: #f8f9ff; padding: 20px; border-radius: 12px; border: 2px solid #e8eeff;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div class="file-icon"><i class="fas fa-file"></i></div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: #333; margin-bottom: 5px;" id="selectedFileName"></div>
+                                    <div style="color: #666; font-size: 14px;" id="selectedFileSize"></div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="clearFileSelection()" style="padding: 10px 20px;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 25px;">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar"></i> Expiry Days</label>
+                                <select id="expiryDays" style="padding: 14px;">
+                                    <option value="1">1 Day</option>
+                                    <option value="3">3 Days</option>
+                                    <option value="7" selected>7 Days (Recommended)</option>
+                                    <option value="14">14 Days</option>
+                                    <option value="30">30 Days</option>
+                                    <option value="90">90 Days</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-hourglass-half"></i> Exact Expiry (optional)</label>
+                                <input type="datetime-local" id="expiryDateTime" style="padding: 14px;" />
+                                <div style="font-size: 12px; color: #777; margin-top: 6px;">If set, this overrides Expiry Days. Leave blank to use the dropdown.</div>
+                            </div>
+                            <div class="checkbox-wrapper" style="margin-bottom: 12px;">
+                                <input type="checkbox" id="noExpiry">
+                                <label for="noExpiry">
+                                    <i class="fas fa-infinity"></i> No expiry (never expires)
+                                </label>
+                            </div>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="oneTimeAccess">
+                                <label for="oneTimeAccess">
+                                    <i class="fas fa-user-secret"></i> One-time access (link expires after first download)
+                                </label>
+                            </div>
+                            <button class="btn btn-primary btn-full" onclick="uploadFile()">
+                                <i class="fas fa-upload"></i> Upload & Generate Share Link
+                            </button>
+                        </div>
+                    </div>
+                    <div id="shareLinkResult" style="display: none;" class="share-link-container">
+                        <div class="share-link-title">
+                            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                            Share Link Created Successfully!
+                        </div>
+                        <div class="link-input-group">
+                            <input type="text" id="generatedShareLink" class="link-input" readonly>
+                            <button class="btn btn-primary copy-btn" onclick="copyLink()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 10px; color: #333;">Share Link Details:</div>
+                            <div style="color: #666; font-size: 14px; line-height: 1.8;">
+                                <div><i class="fas fa-clock"></i> <strong>Expires:</strong> <span id="linkExpiry"></span></div>
+                                <div><i class="fas fa-download"></i> <strong>Access:</strong> <span id="linkAccessType"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-sign-in-alt"></i> Login</div>
+                <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <div class="alert" id="loginAlert"></div>
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            <div style="text-align: center; margin-top: 20px; color: #666;">
+                Don't have an account?
+                <a href="#" onclick="closeModal('loginModal'); openModal('registerModal'); return false;" style="color: #667eea; font-weight: 600;">
+                    Register here
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-user-plus"></i> Register</div>
+                <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <div class="alert" id="registerAlert"></div>
+            <form onsubmit="register(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="regName" required placeholder="demo or johndoe">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="regEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="regPassword" required placeholder="••••••••" minlength="8">
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                        Minimum 8 characters
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            <div style="text-align: center; margin-top: 20px; color: #666;">
+                Already have an account?
+                <a href="#" onclick="closeModal('registerModal'); openModal('loginModal'); return false;" style="color: #667eea; font-weight: 600;">
+                    Login here
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">Processing...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        const DEMO_EMAIL = 'demo@secureshare.com';
+        const DEMO_PASSWORD = 'DemoPass123!';
+        let token = localStorage.getItem('token');
+        let selectedFile = null;
+        let stats = { files: 0, users: 12, downloads: 156 };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (token) {
+                showUserMenu();
+                loadMyFiles();
+            }
+            animateStats();
+
+            const noExpiryEl = document.getElementById('noExpiry');
+            const expiryDaysEl = document.getElementById('expiryDays');
+            const expiryDateEl = document.getElementById('expiryDateTime');
+
+            function syncExpiryControls() {
+                const disabled = noExpiryEl.checked;
+                [expiryDaysEl, expiryDateEl].forEach(el => {
+                    if (!el) return;
+                    el.disabled = disabled;
+                    el.classList.toggle('input-disabled', disabled);
+                    if (disabled) {
+                        el.value = '';
+                    }
+                });
+            }
+
+            if (noExpiryEl && expiryDaysEl && expiryDateEl) {
+                noExpiryEl.addEventListener('change', syncExpiryControls);
+                syncExpiryControls();
+            }
+            
+            // Drag and drop
+            const dropZone = document.getElementById('dropZone');
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelect({ target: { files: files } });
+                }
+            });
+        });
+
+        function animateStats() {
+            animateValue('totalFiles', 0, stats.files, 2000);
+            animateValue('totalUsers', 0, stats.users, 2000);
+            animateValue('totalDownloads', 0, stats.downloads, 2000);
+        }
+
+        function animateValue(id, start, end, duration) {
+            const element = document.getElementById(id);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    element.textContent = end;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        function showSection(sectionId, evt) {
+            const clicked = evt?.target || event?.target;
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) targetSection.classList.add('active');
+
+            if (clicked && clicked.classList.contains('nav-link')) {
+                clicked.classList.add('active');
+            } else {
+                const fallbackLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+                if (fallbackLink) fallbackLink.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (sectionId === 'dashboard' && token) {
+                loadMyFiles();
+            }
+        }
+
+        function showUserMenu() {
+            document.getElementById('userMenu').style.display = 'flex';
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('dashboardLink').style.display = 'block';
+            document.getElementById('uploadLink').style.display = 'block';
+            
+            const email = localStorage.getItem('email') || '';
+            document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase();
+        }
+
+        function hideUserMenu() {
+            document.getElementById('userMenu').style.display = 'none';
+            document.getElementById('authButtons').style.display = 'block';
+            document.getElementById('dashboardLink').style.display = 'none';
+            document.getElementById('uploadLink').style.display = 'none';
+        }
+
+        function setButtonState(button, isLoading, loadingText = 'Please wait...') {
+            if (!button) return;
+            if (!button.dataset.originalText) {
+                button.dataset.originalText = button.innerHTML;
+            }
+
+            if (isLoading) {
+                button.disabled = true;
+                button.classList.add('is-loading');
+                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingText}`;
+            } else {
+                button.disabled = false;
+                button.classList.remove('is-loading');
+                button.innerHTML = button.dataset.originalText;
+            }
+        }
+
+        function showAlert(elementId, message, type = 'success') {
+            const alert = document.getElementById(elementId);
+            alert.className = `alert alert-${type} show`;
+            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        function showLoading(text = 'Processing...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function demoLogin() {
+            document.getElementById('loginEmail').value = DEMO_EMAIL;
+            document.getElementById('loginPassword').value = DEMO_PASSWORD;
+            const loginForm = document.querySelector('#loginModal form');
+            if (loginForm) {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        async function register(event) {
+            event.preventDefault();
+            showLoading('Creating account...');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            setButtonState(submitBtn, true, 'Creating...');
+
+            const data = {
+                username: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                hideLoading();
+                setButtonState(submitBtn, false);
+
+                if (response.ok) {
+                    showAlert('registerAlert', 'Account created successfully! Please login.', 'success');
+                    setTimeout(() => {
+                        closeModal('registerModal');
+                        openModal('loginModal');
+                    }, 1500);
+                } else {
+                    showAlert('registerAlert', result.detail || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('registerAlert', 'Error: ' + error.message, 'error');
+            } finally {
+                setButtonState(submitBtn, false);
+            }
+        }
+
+        async function login(event) {
+            event.preventDefault();
+            showLoading('Logging in...');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            setButtonState(submitBtn, true, 'Signing in...');
+
+            const data = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                hideLoading();
+                setButtonState(submitBtn, false);
+
+                if (response.ok) {
+                    token = result.access_token;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('email', data.email);
+                    showUserMenu();
+                    closeModal('loginModal');
+                    showAlert('dashboardAlert', 'Login successful! Welcome back.', 'success');
+                    showSection('dashboard');
+                    loadMyFiles();
+                } else {
+                    showAlert('loginAlert', result.detail || 'Login failed', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('loginAlert', 'Error: ' + error.message, 'error');
+            } finally {
+                setButtonState(submitBtn, false);
+            }
+        }
+
+        function logout() {
+            token = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('email');
+            hideUserMenu();
+            showSection('home');
+            showAlert('dashboardAlert', 'Logged out successfully', 'success');
+        }
+
+        function handleFileSelect(event) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                document.getElementById('selectedFileName').textContent = selectedFile.name;
+                document.getElementById('selectedFileSize').textContent = `${(selectedFile.size / 1024).toFixed(2)} KB`;
+                document.getElementById('selectedFileInfo').style.display = 'block';
+                document.getElementById('shareLinkResult').style.display = 'none';
+            }
+        }
+
+        function clearFileSelection() {
+            selectedFile = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('selectedFileInfo').style.display = 'none';
+            document.getElementById('shareLinkResult').style.display = 'none';
+        }
+
+        async function uploadFile() {
+            if (!token) {
+                showAlert('uploadAlert', 'Please login first!', 'error');
+                openModal('loginModal');
+                return;
+            }
+
+            if (!selectedFile) {
+                showAlert('uploadAlert', 'Please select a file first!', 'error');
+                return;
+            }
+
+            const uploadBtn = document.querySelector('#upload .btn-primary.btn-full');
+            setButtonState(uploadBtn, true, 'Uploading...');
+            showLoading('Uploading file...');
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const uploadResponse = await fetch(`${API_BASE}/files/upload`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const uploadResult = await uploadResponse.json();
+
+                if (!uploadResponse.ok) {
+                    throw new Error(uploadResult.detail || 'Upload failed');
+                }
+
+                const noExpiry = document.getElementById('noExpiry').checked;
+                const exactExpiry = document.getElementById('expiryDateTime').value;
+                let expiresInHours = null;
+
+                if (!noExpiry) {
+                    if (exactExpiry) {
+                        const target = new Date(exactExpiry);
+                        const now = new Date();
+                        const diffMs = target.getTime() - now.getTime();
+                        if (isNaN(target.getTime()) || diffMs <= 0) {
+                            throw new Error('Expiry date/time must be in the future');
+                        }
+                        expiresInHours = Math.ceil(diffMs / (1000 * 60 * 60));
+                    } else {
+                        expiresInHours = parseInt(document.getElementById('expiryDays').value) * 24;
+                    }
+                }
+
+                const shareData = {
+                    file_id: uploadResult.file_id,
+                    file_name: uploadResult.file_name,
+                    file_size: uploadResult.file_size,
+                    file_hash: uploadResult.file_hash,
+                    one_time_access: document.getElementById('oneTimeAccess').checked,
+                    expires_in_hours: expiresInHours
+                };
+
+                const shareResponse = await fetch(`${API_BASE}/files/share`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(shareData)
+                });
+
+                const shareResult = await shareResponse.json();
+                hideLoading();
+                setButtonState(uploadBtn, false);
+
+                if (shareResponse.ok) {
+                    const shareLink = `${window.location.origin}?token=${shareResult.share_token}`;
+                    document.getElementById('generatedShareLink').value = shareLink;
+                    if (shareResult.expires_at) {
+                        document.getElementById('linkExpiry').textContent = new Date(shareResult.expires_at).toLocaleString();
+                    } else {
+                        document.getElementById('linkExpiry').textContent = 'No expiry';
+                    }
+                    document.getElementById('linkAccessType').textContent = shareResult.one_time_access ? 'One-time only' : 'Multiple downloads';
+                    document.getElementById('shareLinkResult').style.display = 'block';
+                    showAlert('uploadAlert', 'File uploaded successfully!', 'success');
+                    stats.files++;
+                    updateStats();
+                } else {
+                    throw new Error(shareResult.detail || 'Failed to create share link');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('uploadAlert', 'Error: ' + error.message, 'error');
+            } finally {
+                setButtonState(uploadBtn, false);
+            }
+        }
+
+        function copyLink() {
+            const linkInput = document.getElementById('generatedShareLink');
+            linkInput.select();
+            document.execCommand('copy');
+            showAlert('uploadAlert', 'Link copied to clipboard!', 'success');
+        }
+
+        async function loadMyFiles() {
+            const filesList = document.getElementById('myFilesList');
+
+            if (!token) {
+                filesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-lock"></i>
+                        <div class="empty-state-text">Login to see your files</div>
+                        <div class="empty-state-hint">Use Demo Login to explore instantly</div>
+                    </div>
+                `;
+                return;
+            }
+
+            filesList.innerHTML = `<div style="display:flex;align-items:center;gap:10px;color:#666;"><div class="spinner"></div> Loading your shares...</div>`;
+
+            try {
+                const response = await fetch(`${API_BASE}/files/shares`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load shares');
+                }
+
+                const shares = await response.json();
+
+                if (!shares.length) {
+                    filesList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <div class="empty-state-text">No files uploaded yet</div>
+                            <div class="empty-state-hint">Upload your first file to get started</div>
+                        </div>
+                    `;
+                } else {
+                    const items = shares.map(share => {
+                        const expires = share.expires_at ? new Date(share.expires_at) : null;
+                        const expired = expires && expires.getTime() < Date.now();
+                        const badge = share.one_time_access ? '<span style="background:#ffe8d9;color:#d97a2b;padding:4px 8px;border-radius:20px;font-size:12px;">One-time</span>' : '<span style="background:#e6f4ff;color:#1d7afc;padding:4px 8px;border-radius:20px;font-size:12px;">Reusable</span>';
+                        const expiryLabel = expires ? (expired ? 'Expired' : expires.toLocaleString()) : 'No expiry';
+                        const link = `${window.location.origin}?token=${share.share_token}`;
+                        return `
+                            <div class="file-item" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                                <div style="display:flex;align-items:center;gap:12px;">
+                                    <div class="file-icon"><i class="fas fa-file-alt"></i></div>
+                                    <div>
+                                        <div style="font-weight:600;color:#333;">${share.file_name || 'File'}</div>
+                                        <div style="font-size:13px;color:#666;">${(share.file_size/1024).toFixed(1)} KB · ${badge}</div>
+                                        <div style="font-size:12px;color:#888;">Expires: ${expiryLabel}</div>
+                                        <div style="font-size:12px;color:#888;">Downloads: ${share.download_count}</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('${link}')">Copy Link</button>
+                                    <a class="btn btn-secondary" href="${link}" target="_blank" rel="noopener">Open</a>
+                                </div>
+                            </div>`;
+                    }).join('');
+
+                    filesList.innerHTML = items;
+                }
+
+                // Update dashboard stats based on shares
+                const fileCount = shares.length;
+                const downloadCount = shares.reduce((sum, s) => sum + (s.download_count || 0), 0);
+                stats.files = fileCount;
+                stats.downloads = downloadCount;
+                updateStats();
+            } catch (error) {
+                filesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div class="empty-state-text">Could not load files</div>
+                        <div class="empty-state-hint">${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('myFilesCount').textContent = stats.files;
+            document.getElementById('shareLinksCount').textContent = stats.files;
+            document.getElementById('downloadsCount').textContent = stats.downloads;
+            document.getElementById('totalFiles').textContent = stats.files;
+        }
+
+        // Check URL for download token
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            if (token) {
+                downloadFileByToken(token);
+            }
+        });
+
+        async function downloadFileByToken(shareToken) {
+            showLoading('Downloading file...');
+
+            try {
+                const response = await fetch(`${API_BASE}/files/download/${shareToken}`);
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Download failed');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                const filename = response.headers.get('content-disposition')?.split('filename=')[1]?.replace(/"/g, '') || 'download';
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                hideLoading();
+                alert('File downloaded successfully!');
+                stats.downloads++;
+            } catch (error) {
+                hideLoading();
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

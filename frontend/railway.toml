@@ -1,0 +1,9 @@
+[build]
+# Use the Dockerfile in this folder (nginx serving static files)
+builder = "DOCKERFILE"
+
+[deploy]
+# Nginx exposes 80 by default; Railway provides the public port
+numReplicas = 1
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

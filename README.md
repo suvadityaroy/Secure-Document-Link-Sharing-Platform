@@ -1,5 +1,5 @@
 # 🔒 Secure Document & Link Sharing Platform
-🚀 Live Demo: [Open Live Demo](https://secure-document-link-sharing-platform-production-5bdd.up.railway.app/)
+🚀 [Live Demo](https://secure-document-link-sharing-platform-production-5bdd.up.railway.app/)
 
 Secure uploads, share links with expiry/one-time options, and public downloads via token. Includes a demo login so reviewers can try the real flow quickly.
 
